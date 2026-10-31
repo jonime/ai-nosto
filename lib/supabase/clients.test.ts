@@ -132,15 +132,30 @@ describe("session refresh proxy", () => {
     );
   });
 
-  it.each(["/login", "/auth/callback?code=oauth-code"])(
-    "allows unauthenticated access to %s",
+  it.each([
+    "/login",
+    "/privacy",
+    "/privacy?source=google",
+    "/auth/callback?code=oauth-code",
+  ])("allows unauthenticated access to %s", async (path) => {
+    getClaims.mockResolvedValueOnce({ data: null, error: null });
+    const response = await proxy(
+      new NextRequest(`http://localhost:3001${path}`),
+    );
+    expect(response.status).toBe(200);
+    expect(response.headers.get("location")).toBeNull();
+  });
+
+  it.each(["/privacy-settings", "/privacy/private"])(
+    "does not make neighbouring route %s public",
     async (path) => {
       getClaims.mockResolvedValueOnce({ data: null, error: null });
       const response = await proxy(
         new NextRequest(`http://localhost:3001${path}`),
       );
-      expect(response.status).toBe(200);
-      expect(response.headers.get("location")).toBeNull();
+      expect(response.headers.get("location")).toBe(
+        "http://localhost:3001/login",
+      );
     },
   );
 
@@ -214,7 +229,7 @@ describe("session refresh proxy", () => {
     expect(response.headers.get("cache-control")).toBe("private, no-store");
   });
 
-  it.each(["/", "/login", "/auth/callback", "/api/example"])(
+  it.each(["/", "/login", "/privacy", "/auth/callback", "/api/example"])(
     "refreshes sessions on application route %s",
     (url) => {
       expect(unstable_doesMiddlewareMatch({ config, url })).toBe(true);

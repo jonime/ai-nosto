@@ -187,3 +187,37 @@ AI calls are introduced.
       and update security integration tests.
 - [x] 11. Remove application allowlist checks, no-access UI, and CLI; update docs
       and run the required validation gates.
+
+## Amendment: public privacy policy (31 Oct 2026)
+
+Approved by the user. Google sign-in remains the production login method.
+
+### Acceptance criteria
+
+- `/privacy` is accessible without authentication, with a descriptive page title,
+  the existing Poimio branding, and a return link to sign in.
+- The policy names Joni Mertoniemi as operator and uses `privacy@poimio.cc` for
+  privacy and deletion requests. Account and feedback data are retained until
+  deletion is requested; no automatic expiry or deletion UI is promised.
+- Describe current account and feedback processing, recommendation purposes,
+  legal bases, providers, external thumbnails and links, necessary cookies,
+  retention, privacy rights, and international processing without presenting
+  planned AI features as implemented.
+- The login page links to the policy. Only the exact `/privacy` pathname is made
+  public; neighbouring paths and existing authenticated routes remain protected.
+- Existing auth tests cover anonymous policy access, protected neighbouring
+  routes, the login link, and policy rendering without user-data queries.
+- `pnpm lint`, `pnpm typecheck`, and `pnpm test` pass. No production settings,
+  database changes, new dependencies, or login-method changes are included.
+
+### Tasks
+
+- [x] 12. Add the public privacy page and login link, update proxy access and
+      existing auth tests, and run the validation gates.
+
+Task 12 validation: lint, typecheck, and all 212 unit tests passed; 30 database
+integration tests were skipped by the normal test command and were not needed
+for this database-free change. All 87 focused auth/proxy tests passed. Browser
+checks at 1280px and 375px confirmed the page title, loaded branding, no horizontal
+overflow, and working login/privacy navigation. Policy wording remains subject
+to human review before publication; Google OAuth configuration was not changed.

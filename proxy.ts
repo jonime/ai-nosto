@@ -30,6 +30,7 @@ export async function proxy(request: NextRequest) {
   const { data, error } = await supabase.auth.getClaims();
   const isPublicRoute =
     request.nextUrl.pathname === "/login" ||
+    request.nextUrl.pathname === "/privacy" ||
     request.nextUrl.pathname === "/auth/callback";
 
   if (!isPublicRoute && (error || !data?.claims?.sub)) {

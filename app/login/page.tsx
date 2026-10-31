@@ -1,10 +1,12 @@
 import { CircleAlertIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -50,6 +52,14 @@ export default async function Login({
             )}
             <SignInButton />
           </CardContent>
+          <CardFooter className="justify-center">
+            <Link
+              href="/privacy"
+              className="text-sm text-muted-foreground underline underline-offset-4"
+            >
+              Privacy policy
+            </Link>
+          </CardFooter>
         </Card>
       </div>
       {isLocalPasswordLoginEnabled() && <LocalSignInDialog />}

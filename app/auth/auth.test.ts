@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
 import Home from "../(app)/page";
 import Login from "../login/page";
+import PrivacyPage, { metadata as privacyMetadata } from "../privacy/page";
 import { AppHeader } from "@/components/app-header";
 import { PasswordSignInForm } from "../login/password-sign-in-form";
 import { signInWithPassword, signOut } from "./actions";
@@ -132,6 +133,14 @@ describe("signed-in page", () => {
 });
 
 describe("login page", () => {
+  it("links to the public privacy policy", async () => {
+    const html = renderToStaticMarkup(
+      await Login({ searchParams: Promise.resolve({}) }),
+    );
+    expect(html).toContain('href="/privacy"');
+    expect(html).toContain("Privacy policy");
+  });
+
   it("offers Google as the only sign-in method outside local development", async () => {
     const html = renderToStaticMarkup(
       await Login({ searchParams: Promise.resolve({}) }),
@@ -186,6 +195,25 @@ describe("login page", () => {
       await Login({ searchParams: Promise.resolve({ error: "callback" }) }),
     );
     expect(html).toContain("Sign-in could not be completed. Please try again.");
+  });
+});
+
+describe("privacy page", () => {
+  it("renders the policy and contact without loading user data", () => {
+    const html = renderToStaticMarkup(createElement(PrivacyPage));
+    expect(privacyMetadata.title).toBe("Privacy Policy | Poimio");
+    expect(html).toContain("Privacy Policy");
+    expect(html).toContain("Joni Mertoniemi");
+    expect(html).toContain('href="mailto:privacy@poimio.cc"');
+    expect(html).toContain(
+      "We keep your account and feedback until you request deletion.",
+    );
+    expect(html).toContain("OpenAI");
+    expect(html).toContain("Supabase");
+    expect(html).toContain("Vercel");
+    expect(html).toContain('href="/login"');
+    expect(createClient).not.toHaveBeenCalled();
+    expect(auth.getClaims).not.toHaveBeenCalled();
   });
 });
 
